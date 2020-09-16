@@ -26,6 +26,7 @@ heimdallr
 
 Tech Used
 ---
-* [NodeJS](https://nodejs.org) JavaScript runtime built on Chrome's V8 JavaScript engine.
+* [NodeJS](https://github.com/nodejs) JavaScript runtime built on Chrome's V8 JavaScript engine.
 * [chalk](https://github.com/chalk/chalk) Terminal string styling done right
 * [terminal-link](https://github.com/sindresorhus/terminal-link) Create clickable links in the terminal
+* [moment](https://github.com/moment/moment/) A JavaScript date library for parsing, validating, manipulating, and formatting dates.
