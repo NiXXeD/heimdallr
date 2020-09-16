@@ -14,7 +14,7 @@ const doStuff = async () => {
         const repoPRs = await Promise.all(
             repos.map(async repo => {
                 const {values: PRs} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests`)
-                return PRs
+                return PRs.map(pr => ({...pr, repo}))
             })
         )
         const padding = '       '
@@ -25,7 +25,7 @@ const doStuff = async () => {
                 const prTitle = chalk.white(terminalLink(pr.title, pr.links.self[0].href))
                 console.log(`${prNumber} ${prTitle}`)
 
-                const repoName = chalk.gray(terminalLink(pr.fromRef.repository.name, pr.fromRef.repository.links.self[0].href))
+                const repoName = chalk.gray(terminalLink(pr.repo.name, pr.repo.links.self[0].href))
                 const author = chalk.gray(pr.author.user.emailAddress)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
                 console.log(`${padding} ${repoName}\t ${author}\t${updated}`)
