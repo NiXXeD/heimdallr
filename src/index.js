@@ -6,7 +6,15 @@ const terminalLink = require('terminal-link')
 const _ = require('lodash')
 const moment = require('moment')
 
-const {HEIMDALLR_PROJECT: project} = process.env
+const {
+    HEIMDALLR_PROJECT: project,
+    HEIMDALLR_URL: baseUrl,
+    HEIMDALLR_TOKEN: token
+} = process.env
+
+if (!project) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_PROJECT environment variable.'))
+if (!baseUrl) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_URL environment variable.'))
+if (!token) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_TOKEN environment variable.'))
 
 const doStuff = async () => {
     try {
@@ -46,7 +54,7 @@ const doStuff = async () => {
             })
             .value()
     } catch (ex) {
-        console.log('Something went wrong!', ex)
+        console.log(chalk.red('Something went wrong!'), ex)
     }
 }
 return doStuff()
