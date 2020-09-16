@@ -3,7 +3,6 @@
 const bitbucket = require('./bitbucket')
 const chalk = require('chalk')
 const terminalLink = require('terminal-link')
-const _ = require('lodash')
 const moment = require('moment')
 
 const {
@@ -26,18 +25,21 @@ const doStuff = async () => {
             })
         )
         const padding = '       '
-        _.chain(repoPRs)
-            .flatten()
+        repoPRs
+            .flat()
             .forEach(pr => {
-                const prNumber = chalk.gray(`PR#${_.padEnd(pr.id, 4)}`)
+                // PR#123    feat(something): Should do a thing
+                const prNumber = chalk.gray(`PR#${`${pr.id}`.padEnd(4)}`)
                 const prTitle = chalk.white(terminalLink(pr.title, pr.links.self[0].href))
                 console.log(`${prNumber} ${prTitle}`)
 
+                // some-repo-name    an.email@whatever.com    25 nanoseconds ago
                 const repoName = chalk.gray(terminalLink(pr.repo.name, pr.repo.links.self[0].href))
                 const author = chalk.gray(pr.author.user.emailAddress)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
                 console.log(`${padding} ${repoName}\t ${author}\t${updated}`)
 
+                // an.approver@whatever.com, someone.else@whatever.com
                 if (pr.reviewers.length) {
                     const reviewers = pr.reviewers.map(reviewer => {
                         const color = {
@@ -50,9 +52,9 @@ const doStuff = async () => {
                     console.log(`${padding} ${reviewers}`)
                 }
 
-                console.log('') // spacer
+                // spacer
+                console.log('')
             })
-            .value()
     } catch (ex) {
         console.log(chalk.red('Something went wrong!'), ex)
     }

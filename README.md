@@ -23,3 +23,8 @@ Then use it!
 ```
 heimdallr
 ```
+
+Tech Used
+---
+* [chalk](https://github.com/chalk/chalk) Terminal string styling done right
+* [terminal-link](https://github.com/sindresorhus/terminal-link) Create clickable links in the terminal
