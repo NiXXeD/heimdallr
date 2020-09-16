@@ -1,0 +1,23 @@
+{
+    "name": "heimdallr",
+    "version": "0.0.1",
+    "description": "Keep watch over PRs for your bitbucket projects.",
+    "author": "Andy Christianson",
+    "license": "MIT",
+    "private": true,
+    "main": "src/index.js",
+    "scripts": {
+        "start": "node ./src/index.js"
+    },
+    "preferGlobal": true,
+    "bin": {
+        "heimdallr": "./src/index.js"
+    },
+    "dependencies": {
+        "chalk": "4.1.0",
+        "lodash": "4.17.20",
+        "moment": "2.28.0",
+        "node-fetch": "2.6.1",
+        "terminal-link": "2.1.1"
+    }
+}
