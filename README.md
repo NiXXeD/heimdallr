@@ -26,5 +26,6 @@ heimdallr
 
 Tech Used
 ---
+* [NodeJS](https://nodejs.org) JavaScript runtime built on Chrome's V8 JavaScript engine.
 * [chalk](https://github.com/chalk/chalk) Terminal string styling done right
 * [terminal-link](https://github.com/sindresorhus/terminal-link) Create clickable links in the terminal
