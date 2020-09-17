@@ -63,7 +63,7 @@ const doStuff = async () => {
                 const author = chalk.gray(pr.author.user.emailAddress)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
                 const newActivityCount = pr.activities.filter(activity => !cache[value] || activity.createdDate > cache[value]).length
-                const activityCountText = newActivityCount > 0 ? chalk.red(`+${newActivityCount}`.padEnd(7)) : '      '
+                const activityCountText = newActivityCount > 0 ? chalk.red(`+${newActivityCount}`.padEnd(7)) : '       '
                 message += `   ${activityCountText} ${repoName}\t ${author}\t${updated}\n`
 
                 // +123   an.approver@whatever.com, someone.else@whatever.com
