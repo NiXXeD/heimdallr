@@ -2,10 +2,10 @@
 
 const bitbucket = require('./bitbucket')
 const chalk = require('chalk')
-const terminalLink = require('terminal-link')
 const moment = require('moment')
 const inquirer = require('inquirer')
 const open = require('open')
+const {cache, updateCache, cleanCache} = require('./cache')
 
 const {
     HEIMDALLR_PROJECT: project,
@@ -27,7 +27,6 @@ const restartTimer = () => {
     }, 5 * 60 * 60 * 1000)
 }
 
-const padding = '         '
 const doStuff = async () => {
     try {
         restartTimer()
@@ -36,28 +35,40 @@ const doStuff = async () => {
         const repoPRs = await Promise.all(
             repos.map(async repo => {
                 const {values: PRs} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests`)
-                return PRs.map(pr => ({...pr, repo}))
+
+                return Promise.all(PRs.map(async pr => {
+                    const {values: activities} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests/${pr.id}/activities`)
+                    return {
+                        ...pr,
+                        activities,
+                        repo
+                    }
+                }))
             })
         )
+        const openPrIds = []
         const choices = repoPRs
             .flat()
             .map(pr => {
-                let message = ''
                 const value = pr.links.self[0].href
+                openPrIds.push(value)
+                let message = ''
                 // PR#123    feat(something): Should do a thing
-                const prNumber = chalk.gray(`PR#${`${pr.id}`.padEnd(4)}`)
-                const prTitle = chalk.white(terminalLink(pr.title, pr.links.self[0].href))
+                const prNumber = chalk.gray(`PR#${`${pr.id}`.padEnd(5)}`)
+                const prTitle = chalk.white(pr.title)
                 message += `${prNumber} ${prTitle}\n`
 
                 // some-repo-name    an.email@whatever.com    25 nanoseconds ago
-                const repoName = chalk.gray(terminalLink(pr.repo.name, pr.repo.links.self[0].href))
+                const repoName = chalk.gray(pr.repo.name)
                 const author = chalk.gray(pr.author.user.emailAddress)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
-                message += `${padding} ${repoName}\t ${author}\t${updated}\n`
+                const newActivityCount = pr.activities.filter(activity => !cache[value] || activity.createdDate > cache[value]).length
+                const activityCountText = newActivityCount > 0 ? chalk.red(`+${newActivityCount}`.padEnd(7)) : '      '
+                message += `   ${activityCountText} ${repoName}\t ${author}\t${updated}\n`
 
-                // an.approver@whatever.com, someone.else@whatever.com
-                if (pr.reviewers.length) {
-                    const reviewers = pr.reviewers.map(reviewer => {
+                // +123   an.approver@whatever.com, someone.else@whatever.com
+                const reviewers = pr.reviewers.length
+                    ? pr.reviewers.map(reviewer => {
                         const color = {
                             UNAPPROVED: chalk.yellow,
                             APPROVED: chalk.green,
@@ -65,11 +76,16 @@ const doStuff = async () => {
                         }[reviewer.status]
                         return color(reviewer.user.emailAddress)
                     }).join(chalk.white(', '))
-                    message += `${padding} ${reviewers}\n`
-                }
+                    : ''
+
+                const totalActivity = chalk.yellow(`${pr.activities.length}`.padEnd(6))
+                message += `    ${totalActivity} ${reviewers}\n`
 
                 return {name: message, value}
             })
+
+        // Clean out PRs that are no longer open from the cache
+        cleanCache(openPrIds)
 
         console.clear()
         prompt = inquirer.prompt([
@@ -92,6 +108,9 @@ const doStuff = async () => {
         const {choice} = await prompt
 
         if (choice && choice !== 'refresh') {
+            // Update cache with new value
+            updateCache(choice)
+
             // Open selected PR in browser
             open(choice)
         }
@@ -99,6 +118,7 @@ const doStuff = async () => {
         return doStuff()
     } catch (ex) {
         console.log(chalk.red('Something went wrong!'), ex)
+        process.exit(1)
     }
 }
 return doStuff()
