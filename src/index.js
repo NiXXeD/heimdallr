@@ -4,6 +4,8 @@ const bitbucket = require('./bitbucket')
 const chalk = require('chalk')
 const terminalLink = require('terminal-link')
 const moment = require('moment')
+const inquirer = require('inquirer')
+const open = require('open')
 
 const {
     HEIMDALLR_PROJECT: project,
@@ -15,6 +17,7 @@ if (!project) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set t
 if (!baseUrl) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_URL environment variable.'))
 if (!token) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_TOKEN environment variable.'))
 
+const padding = '         '
 const doStuff = async () => {
     try {
         const {values: repos} = await bitbucket.get(`projects/${project}/repos`)
@@ -24,20 +27,21 @@ const doStuff = async () => {
                 return PRs.map(pr => ({...pr, repo}))
             })
         )
-        const padding = '       '
-        repoPRs
+        const choices = repoPRs
             .flat()
-            .forEach(pr => {
+            .map(pr => {
+                let message = ''
+                const value = pr.links.self[0].href
                 // PR#123    feat(something): Should do a thing
                 const prNumber = chalk.gray(`PR#${`${pr.id}`.padEnd(4)}`)
                 const prTitle = chalk.white(terminalLink(pr.title, pr.links.self[0].href))
-                console.log(`${prNumber} ${prTitle}`)
+                message += `${prNumber} ${prTitle}\n`
 
                 // some-repo-name    an.email@whatever.com    25 nanoseconds ago
                 const repoName = chalk.gray(terminalLink(pr.repo.name, pr.repo.links.self[0].href))
                 const author = chalk.gray(pr.author.user.emailAddress)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
-                console.log(`${padding} ${repoName}\t ${author}\t${updated}`)
+                message += `${padding} ${repoName}\t ${author}\t${updated}\n`
 
                 // an.approver@whatever.com, someone.else@whatever.com
                 if (pr.reviewers.length) {
@@ -49,12 +53,37 @@ const doStuff = async () => {
                         }[reviewer.status]
                         return color(reviewer.user.emailAddress)
                     }).join(chalk.white(', '))
-                    console.log(`${padding} ${reviewers}`)
+                    message += `${padding} ${reviewers}\n`
                 }
 
-                // spacer
-                console.log('')
+                return {name: message, value}
             })
+
+        console.clear()
+        const {choice} = await inquirer.prompt([
+            {
+                type: 'list',
+                pageSize: 20,
+                name: 'choice',
+                message: `All open PRs currently in BitBucket Project ${project}`,
+                choices: [
+                    new inquirer.Separator(),
+                    {
+                        name: chalk.green('Refresh data'),
+                        value: 'refresh'
+                    },
+                    new inquirer.Separator(),
+                    ...choices
+                ]
+            }
+        ])
+
+        if (choice !== 'refresh') {
+            // Open selected PR in browser
+            open(choice)
+        }
+
+        return doStuff()
     } catch (ex) {
         console.log(chalk.red('Something went wrong!'), ex)
     }

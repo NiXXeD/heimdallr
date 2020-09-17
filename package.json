@@ -15,8 +15,10 @@
     },
     "dependencies": {
         "chalk": "4.1.0",
+        "inquirer": "^7.3.3",
         "moment": "2.28.0",
         "node-fetch": "2.6.1",
+        "open": "^7.2.1",
         "terminal-link": "2.1.1"
     }
 }
