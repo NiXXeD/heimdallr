@@ -17,9 +17,21 @@ if (!project) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set t
 if (!baseUrl) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_URL environment variable.'))
 if (!token) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_TOKEN environment variable.'))
 
+let prompt
+let timerId
+const restartTimer = () => {
+    clearInterval(timerId)
+    timerId = setTimeout(() => {
+        prompt.ui.close()
+        return doStuff()
+    }, 5 * 60 * 60 * 1000)
+}
+
 const padding = '         '
 const doStuff = async () => {
     try {
+        restartTimer()
+
         const {values: repos} = await bitbucket.get(`projects/${project}/repos`)
         const repoPRs = await Promise.all(
             repos.map(async repo => {
@@ -60,7 +72,7 @@ const doStuff = async () => {
             })
 
         console.clear()
-        const {choice} = await inquirer.prompt([
+        prompt = inquirer.prompt([
             {
                 type: 'list',
                 pageSize: 20,
@@ -69,7 +81,7 @@ const doStuff = async () => {
                 choices: [
                     new inquirer.Separator(),
                     {
-                        name: chalk.green('Refresh data'),
+                        name: chalk.green('Refresh data ') + chalk.bold(`(last refreshed at ${moment().format('h:mm:ss a')})`),
                         value: 'refresh'
                     },
                     new inquirer.Separator(),
@@ -77,8 +89,9 @@ const doStuff = async () => {
                 ]
             }
         ])
+        const {choice} = await prompt
 
-        if (choice !== 'refresh') {
+        if (choice && choice !== 'refresh') {
             // Open selected PR in browser
             open(choice)
         }
