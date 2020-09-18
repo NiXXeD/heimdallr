@@ -28,7 +28,7 @@ const restartTimer = () => {
 const main = async () => {
     try {
         restartTimer()
-        await heimdallr({project, baseUrl, token, email})
+        await heimdallr({project, email})
         return main()
     } catch (ex) {
         console.log(chalk.red('Something went wrong!'), ex)

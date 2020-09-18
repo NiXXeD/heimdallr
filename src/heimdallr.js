@@ -5,7 +5,7 @@ const inquirer = require('inquirer')
 const open = require('open')
 const {cache, updateCache, cleanCache} = require('./cache')
 
-module.exports = async ({project, baseUrl, token, email}) => {
+module.exports = async ({project, email}) => {
     const {values: repos} = await bitbucket.get(`projects/${project}/repos`)
     const repoPRs = await Promise.all(
         repos.map(async repo => {
