@@ -10,7 +10,8 @@ const {cache, updateCache, cleanCache} = require('./cache')
 const {
     HEIMDALLR_PROJECT: project,
     HEIMDALLR_URL: baseUrl,
-    HEIMDALLR_TOKEN: token
+    HEIMDALLR_TOKEN: token,
+    HEIMDALLR_EMAIL: email
 } = process.env
 
 if (!project) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_PROJECT environment variable.'))
@@ -62,7 +63,13 @@ const doStuff = async () => {
                 const repoName = chalk.gray(pr.repo.name)
                 const author = chalk.gray(pr.author.user.emailAddress)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
-                const newActivityCount = pr.activities.filter(activity => !cache[value] || activity.createdDate > cache[value]).length
+                const newActivities = pr.activities
+                    .filter(activity => !cache[value] || activity.createdDate > cache[value])
+                const selfActivity = newActivities
+                    .findIndex(activity => activity.user.emailAddress === email)
+                const newActivityCount = selfActivity >= 0
+                    ? Math.min(selfActivity, newActivities.length)
+                    : newActivities.length
                 const activityCountText = newActivityCount > 0 ? chalk.red(`+${newActivityCount}`.padEnd(7)) : '       '
                 message += `   ${activityCountText} ${repoName}\t ${author}\t${updated}\n`
 
