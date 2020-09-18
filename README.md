@@ -3,6 +3,16 @@ Heimdallr
 
 Keep watch over all your project PRs.
 
+Features
+---
+* Helps you keep track of activity over many repositories
+* Provides quick access to each PR, select one and hit Enter to open it in your default browser
+* Keeps track of which activity you've reviewed per PR
+* Shows reviewers and their status
+  * Green for Approved
+  * Yellow for Not Reviewed
+  * Red for Needs Work
+
 Usage
 ---
 
@@ -12,6 +22,7 @@ First set your environment variables. For the token, create a "Personal Access T
 HEIMDALLR_URL="https://some.bitbucket.url/rest/api/1.0
 HEIMDALLR_PROJECT="PROJECT-NAME"
 HEIMDALLR_TOKEN="YOUR-TOKEN"
+HEIMDALLR_EMAIL="a@b.c"
 ```
 
 Then install it globally for usage.

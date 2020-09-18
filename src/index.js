@@ -17,6 +17,7 @@ const {
 if (!project) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_PROJECT environment variable.'))
 if (!baseUrl) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_URL environment variable.'))
 if (!token) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_TOKEN environment variable.'))
+if (!email) return console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the HEIMDALLR_EMAIL environment variable.'))
 
 let prompt
 let timerId
