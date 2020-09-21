@@ -1,9 +1,11 @@
+const chalk = require('chalk')
 const fetch = require('node-fetch')
+const {baseUrl, token} = require('./config')
 
-const {
-    HEIMDALLR_URL: baseUrl,
-    HEIMDALLR_TOKEN: token
-} = process.env
+if (!baseUrl || !token) {
+    console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the baseUrl and token variables in your config.'))
+    process.exit(-1)
+}
 
 module.exports = {
     get: async url => {

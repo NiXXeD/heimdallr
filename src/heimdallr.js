@@ -4,25 +4,34 @@ const moment = require('moment')
 const inquirer = require('inquirer')
 const open = require('open')
 const {cache, updateCache, cleanCache} = require('./cache')
+const config = require('./config')
 
-module.exports = async ({project, email}) => {
-    const {values: repos} = await bitbucket.get(`projects/${project}/repos`)
-    const repoPRs = await Promise.all(
-        repos.map(async repo => {
-            const {values: PRs} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests`)
-
-            return Promise.all(PRs.map(async pr => {
-                const {values: activities} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests/${pr.id}/activities`)
-                return {
-                    ...pr,
-                    activities,
-                    repo
-                }
-            }))
-        })
-    )
+module.exports = async () => {
+    const PRs = await Promise.all([
+        ...config.projects
+            .map(async project => {
+                const {values: repos} = await bitbucket.get(`projects/${project}/repos`)
+                return await Promise.all(repos.map(async repo => {
+                    const {values: repoPRs} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests`)
+                    return Promise.all(repoPRs.map(async pr => {
+                        const {values: activities} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests/${pr.id}/activities`)
+                        return ({...pr, activities, repo})
+                    }))
+                }))
+            }),
+        ...config.repositories
+            .map(async ({project, repository}) => {
+                const repo = await bitbucket.get(`projects/${project}/repos/${repository}`)
+                const {values: repoPRs} = await bitbucket.get(`projects/${project}/repos/${repository}/pull-requests`)
+                return Promise.all(repoPRs.map(async pr => {
+                    const {values: activities} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests/${pr.id}/activities`)
+                    return ({...pr, activities, repo})
+                }))
+            })
+    ])
     const openPrIds = []
-    const choices = repoPRs
+    const choices = PRs
+        .flat()
         .flat()
         .map(pr => {
             const value = pr.links.self[0].href
@@ -33,14 +42,14 @@ module.exports = async ({project, email}) => {
             const prTitle = chalk.white(pr.title)
             message += `${prNumber} ${prTitle}\n`
 
-            // some-repo-name    an.email@whatever.com    25 nanoseconds ago
-            const repoName = chalk.gray(pr.repo.name)
+            // projectName/repoName    an.email@whatever.com    25 nanoseconds ago
+            const repoName = chalk.gray(`${pr.repo.project.key}/${pr.repo.name}`)
             const author = chalk.gray(pr.author.user.emailAddress)
             const updated = chalk.gray(moment(pr.updatedDate).fromNow())
             const newActivities = pr.activities
                 .filter(activity => !cache[value] || activity.createdDate > cache[value])
             const selfActivity = newActivities
-                .findIndex(activity => activity.user.emailAddress === email)
+                .findIndex(activity => activity.user.emailAddress === config.email)
             const newActivityCount = selfActivity >= 0
                 ? Math.min(selfActivity, newActivities.length)
                 : newActivities.length
@@ -72,9 +81,9 @@ module.exports = async ({project, email}) => {
     prompt = inquirer.prompt([
         {
             type: 'list',
-            pageSize: 50,
+            pageSize: config.pageSize,
             name: 'choice',
-            message: `${choices.length} open PRs currently in BitBucket Project ${project}`,
+            message: `-Heimdallr-  ${choices.length} open PRs`,
             choices: [
                 new inquirer.Separator(),
                 {

@@ -16,13 +16,22 @@ Features
 Usage
 ---
 
-First set your environment variables. For the token, create a "Personal Access Token" in your profile page.
+First create your config. For the token, create a "Personal Access Token" in your profile page.
 
-```
-HEIMDALLR_URL="https://some.bitbucket.url/rest/api/1.0
-HEIMDALLR_PROJECT="PROJECT-NAME"
-HEIMDALLR_TOKEN="YOUR-TOKEN"
-HEIMDALLR_EMAIL="a@b.c"
+```json
+{
+    "baseUrl": "https://some.bitbucket.url/rest/api/1.0",
+    "token": "YOUR-TOKEN",
+    "email": "some@email.com",
+    "projects": [
+        "Project1",
+        "Project2"
+    ],
+    "repositories": [
+        {"project": "ExternalProject", "repository": "ExternalRepo"},
+        {"project": "AnotherExternalProject", "repository": "AnotherExternalRepo"}
+    ]
+}
 ```
 
 Then install it globally for usage.
