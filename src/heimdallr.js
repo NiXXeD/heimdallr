@@ -74,7 +74,7 @@ module.exports = async ({project, email}) => {
             type: 'list',
             pageSize: 50,
             name: 'choice',
-            message: `All open PRs currently in BitBucket Project ${project}`,
+            message: `${choices.length} open PRs currently in BitBucket Project ${project}`,
             choices: [
                 new inquirer.Separator(),
                 {
