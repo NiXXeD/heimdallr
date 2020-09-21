@@ -7,7 +7,7 @@ Features
 ---
 * Helps you keep track of activity over many repositories
 * Provides quick access to each PR, select one and hit Enter to open it in your default browser
-* Keeps track of which activity you've reviewed per PR
+* Keeps track of which activity you've reviewed per PR, including your activity outside of heimdallr.
 * Shows reviewers and their status
   * Green for Approved
   * Yellow for Not Reviewed
@@ -16,7 +16,7 @@ Features
 Usage
 ---
 
-First create your config. For the token, create a "Personal Access Token" in your profile page.
+First create your config (`~/.heimdallrconfig.json`). For the token, create a "Personal Access Token" in your profile page.
 
 ```json
 {
@@ -34,7 +34,7 @@ First create your config. For the token, create a "Personal Access Token" in you
 }
 ```
 
-Then install it globally for usage.
+Then install it globally for usage. This same command can be used to update it later as well.
 ```
 yarn install -g https://github.com/NiXXeD/heimdallr
 ```
