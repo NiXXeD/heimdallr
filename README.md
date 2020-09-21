@@ -23,6 +23,7 @@ First create your config (`~/.heimdallrconfig.json`). For the token, create a "P
     "baseUrl": "https://some.bitbucket.url/rest/api/1.0",
     "token": "YOUR-TOKEN",
     "email": "some@email.com",
+    "pageSize": 25,
     "projects": [
         "Project1",
         "Project2"
