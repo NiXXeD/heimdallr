@@ -72,7 +72,7 @@ module.exports = async ({project, email}) => {
     prompt = inquirer.prompt([
         {
             type: 'list',
-            pageSize: 20,
+            pageSize: 50,
             name: 'choice',
             message: `All open PRs currently in BitBucket Project ${project}`,
             choices: [
