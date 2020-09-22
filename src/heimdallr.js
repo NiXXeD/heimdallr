@@ -11,7 +11,7 @@ module.exports = async () => {
     const openPrIds = []
     const choices = PRs
         .map(pr => {
-            openPrIds.push(pr.uniqueId)
+            openPrIds.push(pr.href)
             let message = ''
             // PR#123    feat(something): Should do a thing
             const prNumber = chalk.gray(`PR#${`${pr.number}`.padEnd(5)}`)
