@@ -2,8 +2,7 @@ const fs = require('fs')
 const filename = require('os').homedir() + '/.heimdallrconfig.json'
 
 let config = {
-    projects: [],
-    repositories: [],
+    sources: [],
     pageSize: 25
 }
 try {

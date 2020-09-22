@@ -20,17 +20,26 @@ First create your config (`~/.heimdallrconfig.json`). For the token, create a "P
 
 ```json
 {
-    "baseUrl": "https://some.bitbucket.url/rest/api/1.0",
-    "token": "YOUR-TOKEN",
-    "email": "some@email.com",
     "pageSize": 25,
-    "projects": [
-        "Project1",
-        "Project2"
-    ],
-    "repositories": [
-        {"project": "ExternalProject", "repository": "ExternalRepo"},
-        {"project": "AnotherExternalProject", "repository": "AnotherExternalRepo"}
+    "sources": [
+        {
+            "type": "bitbucket",
+            "baseUrl": "https://some.bitbucket.url/rest/api/1.0",
+            "email": "some@email.com",
+            "token": "YOUR-TOKEN",
+            "projects": [
+                "Project1",
+                "Project2"
+            ],
+            "repositories": [
+                {"project": "ExternalProject", "repository": "ExternalRepo"},
+                {"project": "AnotherExternalProject", "repository": "AnotherExternalRepo"}
+            ]
+        },
+        {
+            "type": "github",
+            "TBD": "TBD"
+        }   
     ]
 }
 ```
