@@ -33,7 +33,7 @@ module.exports = async () => {
                     NEEDS_WORK: chalk.red
                 }[reviewer.status]
                 return color(reviewer.name)
-            }).join(chalk.white(', '))
+            }).join(chalk.white(', ')) || 'No reviewers yet...'
 
             const totalActivity = chalk.yellow(`${pr.totalActivityCount}`.padEnd(6))
             message += `    ${totalActivity} ${reviewers}\n`

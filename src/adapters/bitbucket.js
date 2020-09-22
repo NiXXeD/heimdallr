@@ -56,7 +56,6 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
 
             return {
                 href,
-                id: pr.id,
                 number: pr.id,
                 title: pr.title,
                 repoName: `${pr.repo.project.key}/${pr.repo.name}`,
