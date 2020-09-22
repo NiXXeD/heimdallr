@@ -81,6 +81,7 @@ module.exports = async () => {
     prompt = inquirer.prompt([
         {
             type: 'list',
+            loop: false,
             pageSize: config.pageSize,
             name: 'choice',
             message: `-Heimdallr-  ${choices.length} open PRs`,
