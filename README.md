@@ -38,7 +38,7 @@ First create your config (`~/.heimdallrconfig.json`). For the token, create a "P
         },
         {
             "type": "github",
-            "username": "NiXXeD",
+            "username": "SomeUsername",
             "token": "YOUR-TOKEN",
             "repositories": [
                 {"owner": "SomeOrg", "repo": "SomeRepo"}
