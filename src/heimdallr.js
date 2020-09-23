@@ -49,7 +49,7 @@ module.exports = async () => {
         {
             type: 'list',
             loop: false,
-            pageSize: config.pageSize,
+            pageSize: config.pageSize || 25,
             name: 'choice',
             message: `-Heimdallr-  ${choices.length} open PRs`,
             choices: [

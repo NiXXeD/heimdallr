@@ -20,7 +20,8 @@ First create your config (`~/.heimdallrconfig.json`). For the token, create a "P
 
 ```json
 {
-    "pageSize": 25,
+    "pageSize": 25, 
+    "refreshIntervalMinutes": 15,
     "sources": [
         {
             "type": "bitbucket",

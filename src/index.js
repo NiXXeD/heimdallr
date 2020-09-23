@@ -2,6 +2,9 @@
 
 const chalk = require('chalk')
 const heimdallr = require('./heimdallr')
+const config = require('./config')
+
+const refreshIntervalMS = (config.refreshIntervalMinutes || 15) * 60 * 1000
 
 let prompt
 let timerId
@@ -10,7 +13,7 @@ const restartTimer = () => {
     timerId = setTimeout(() => {
         prompt.ui.close()
         return main()
-    }, 5 * 60 * 60 * 1000)
+    }, refreshIntervalMS)
 }
 
 const main = async () => {

@@ -3,6 +3,7 @@ const filename = require('os').homedir() + '/.heimdallrconfig.json'
 
 let config = {
     sources: [],
+    refreshIntervalMinutes: 15,
     pageSize: 25
 }
 try {
