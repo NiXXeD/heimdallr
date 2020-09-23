@@ -64,3 +64,4 @@ Tech Used
 * [inquirer](https://github.com/SBoudrias/Inquirer.js) A collection of common interactive command line user interfaces.
 * [chalk](https://github.com/chalk/chalk) Terminal string styling done right
 * [moment](https://github.com/moment/moment/) A JavaScript date library for parsing, validating, manipulating, and formatting dates.
+* [octokit](https://octokit.github.io/) GitHub REST API client for JavaScript
