@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const {cache} = require('../cache')
 const {Octokit} = require('@octokit/rest')
 
-module.exports = async ({baseUrl, token, repositories}) => {
+module.exports = async ({baseUrl, token, username, repositories}) => {
     if (!token) {
         console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the token variable in your github source.'))
         process.exit(-1)
@@ -44,10 +44,16 @@ module.exports = async ({baseUrl, token, repositories}) => {
                 }, reviewers)
             )
 
-            const newActivityCount = pr.comments.map(c => c.updated_at)
-                .concat(pr.reviewComments.map(c => c.updated_at))
-                .concat(pr.reviews.map(c => c.submitted_at))
-                .filter(value => !cache[href] || new Date(value) > new Date(cache[href])).length
+            const newActivities = pr.comments.map(c => ({name: c.user.login, date: new Date(c.updated_at).getTime()}))
+                .concat(pr.reviewComments.map(c => ({name: c.user.login, date: new Date(c.updated_at).getTime()})))
+                .concat(pr.reviews.map(c => ({name: c.user.login, date: new Date(c.submitted_at).getTime()})))
+                .filter(({date}) => !cache[href] || date > new Date(cache[href]))
+                .sort((a, b) => b.date - a.date)
+            const selfActivity = newActivities
+                .findIndex(activity => activity.name === username)
+            const newActivityCount = selfActivity >= 0
+                ? Math.min(selfActivity, newActivities.length)
+                : newActivities.length
             const totalActivityCount = pr.comments.length + pr.reviewComments.length + pr.reviews.length
 
             return {
