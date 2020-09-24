@@ -6,7 +6,7 @@ const {updateCache, cleanCache} = require('./cache')
 const config = require('./config')
 const adapters = require('./adapters')
 
-module.exports = async () => {
+module.exports = async restartTimer => {
     const PRs = (await Promise.all(config.sources.map(source => adapters[source.type](source)))).flat()
     const openPrIds = []
     const choices = PRs
@@ -33,7 +33,7 @@ module.exports = async () => {
                     NEEDS_WORK: chalk.red
                 }[reviewer.status]
                 return color(reviewer.name)
-            }).join(chalk.white(', ')) || 'No reviewers yet...'
+            }).join(chalk.white(', ')) || chalk.white('No reviewers yet...')
 
             const totalActivity = chalk.yellow(`${pr.totalActivityCount}`.padEnd(6))
             message += `    ${totalActivity} ${reviewers}\n`
@@ -45,7 +45,7 @@ module.exports = async () => {
     cleanCache(openPrIds)
 
     console.clear()
-    prompt = inquirer.prompt([
+    const prompt = inquirer.prompt([
         {
             type: 'list',
             loop: false,
@@ -63,6 +63,7 @@ module.exports = async () => {
             ]
         }
     ])
+    restartTimer(prompt)
     const {choice} = await prompt
 
     if (choice && choice !== 'refresh') {

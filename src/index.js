@@ -2,28 +2,16 @@
 
 const chalk = require('chalk')
 const heimdallr = require('./heimdallr')
-const config = require('./config')
-
-const refreshIntervalMS = (config.refreshIntervalMinutes || 15) * 60 * 1000
-
-let prompt
-let timerId
-const restartTimer = () => {
-    clearInterval(timerId)
-    timerId = setTimeout(() => {
-        prompt.ui.close()
-        return main()
-    }, refreshIntervalMS)
-}
+const timer = require('./timer')
 
 const main = async () => {
     try {
-        restartTimer()
-        await heimdallr()
+        await heimdallr(restartTimer)
         return main()
     } catch (ex) {
         console.log(chalk.red('Something went wrong!'), ex)
         process.exit(1)
     }
 }
+const restartTimer = timer(main)
 return main()
