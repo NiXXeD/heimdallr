@@ -21,7 +21,7 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
 
     const projectPRs = projects
         .map(async project => {
-            const {values: repos} = await bitbucket.get(`projects/${project}/repos`)
+            const {values: repos} = await bitbucket.get(`projects/${project}/repos?limit=100`)
             return await Promise.all(repos.map(async repo => {
                 const {values: repoPRs} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests`)
                 return Promise.all(repoPRs.map(async pr => {
