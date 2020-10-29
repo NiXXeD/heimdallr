@@ -14,4 +14,5 @@ const main = async () => {
         process.exit(1)
     }
 }
+timer.setFunc(main)
 return main()
