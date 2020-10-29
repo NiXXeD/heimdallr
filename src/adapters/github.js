@@ -44,17 +44,10 @@ module.exports = async ({baseUrl, token, username, repositories}) => {
                 }, reviewers)
             )
 
-            const newActivities = pr.comments.map(c => ({name: c.user.login, date: new Date(c.updated_at).getTime()}))
-                .concat(pr.reviewComments.map(c => ({name: c.user.login, date: new Date(c.updated_at).getTime()})))
-                .concat(pr.reviews.map(c => ({name: c.user.login, date: new Date(c.submitted_at).getTime()})))
-                .filter(({date}) => !cache[href] || date > new Date(cache[href]))
+            const activities = pr.comments.map(c => ({self: c.user.login === username, date: new Date(c.updated_at).getTime()}))
+                .concat(pr.reviewComments.map(c => ({self: c.user.login === username, date: new Date(c.updated_at).getTime()})))
+                .concat(pr.reviews.map(c => ({self: c.user.login === username, date: new Date(c.submitted_at).getTime()})))
                 .sort((a, b) => b.date - a.date)
-            const selfActivity = newActivities
-                .findIndex(activity => activity.name === username)
-            const newActivityCount = selfActivity >= 0
-                ? Math.min(selfActivity, newActivities.length)
-                : newActivities.length
-            const totalActivityCount = pr.comments.length + pr.reviewComments.length + pr.reviews.length
 
             return {
                 href,
@@ -63,8 +56,7 @@ module.exports = async ({baseUrl, token, username, repositories}) => {
                 repoName: `${pr.owner}/${pr.repo}`,
                 author: pr.user.login,
                 updatedDate: pr.updated_at,
-                newActivityCount,
-                totalActivityCount,
+                activities,
                 reviewers
             }
         })

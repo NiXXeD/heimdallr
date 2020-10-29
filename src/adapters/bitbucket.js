@@ -44,13 +44,10 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
         .flat().flat()
         .map(pr => {
             const href = pr.links.self[0].href
-            const newActivities = pr.activities
-                .filter(activity => !cache[href] || activity.createdDate > cache[href])
-            const selfActivity = newActivities
-                .findIndex(activity => activity.user.emailAddress === email)
-            const newActivityCount = selfActivity >= 0
-                ? Math.min(selfActivity, newActivities.length)
-                : newActivities.length
+            const activities = pr.activities.map(activity => ({
+                date: activity.createdDate,
+                self: activity.user.emailAddress === email
+            }))
             const reviewers = pr.reviewers
                 .map(reviewer => ({name: reviewer.user.emailAddress, status: reviewer.status}))
 
@@ -61,8 +58,7 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
                 repoName: `${pr.repo.project.key}/${pr.repo.name}`,
                 author: pr.author.user.emailAddress,
                 updatedDate: pr.updatedDate,
-                newActivityCount,
-                totalActivityCount: pr.activities.length,
+                activities,
                 reviewers
             }
         })

@@ -6,7 +6,7 @@ const timer = require('./timer')
 
 const main = async () => {
     try {
-        await heimdallr(restartTimer)
+        await heimdallr(timer)
         return main()
     } catch (ex) {
         if (ex.code === 'ENOTFOUND') return setTimeout(() => main(), 15000)
@@ -14,5 +14,4 @@ const main = async () => {
         process.exit(1)
     }
 }
-const restartTimer = timer(main)
 return main()
