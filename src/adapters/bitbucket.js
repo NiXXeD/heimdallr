@@ -49,6 +49,7 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
                 self: activity.user.emailAddress === email
             }))
             const reviewers = pr.reviewers
+                .filter(reviewer => reviewer.user.emailAddress)
                 .map(reviewer => ({name: reviewer.user.emailAddress, status: reviewer.status}))
 
             return {
