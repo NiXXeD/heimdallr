@@ -50,7 +50,11 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
             }))
             const reviewers = pr.reviewers
                 .filter(reviewer => reviewer.user.emailAddress)
-                .map(reviewer => ({name: reviewer.user.emailAddress, status: reviewer.status}))
+                .map(reviewer => ({
+                    name: reviewer.user.emailAddress,
+                    self: reviewer.user.emailAddress === email,
+                    status: reviewer.status
+                }))
 
             return {
                 href,
@@ -58,6 +62,7 @@ module.exports = async ({baseUrl, token, email, projects, repositories}) => {
                 title: pr.title,
                 repoName: `${pr.repo.project.key}/${pr.repo.name}`,
                 author: pr.author.user.emailAddress,
+                authorSelf: pr.author.user.emailAddress === email,
                 updatedDate: pr.updatedDate,
                 activities,
                 reviewers

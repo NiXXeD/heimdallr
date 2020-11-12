@@ -26,7 +26,7 @@ module.exports = async timer => {
 
                 // projectName/repoName    an.email@whatever.com    25 nanoseconds ago
                 const repoName = chalk.gray(pr.repoName)
-                const author = chalk.gray(pr.author)
+                const author = pr.authorSelf ? chalk.cyan(pr.author) : chalk.gray(pr.author)
                 const updated = chalk.gray(moment(pr.updatedDate).fromNow())
                 const newActivities = pr.activities.filter(i => !cache[pr.href] || i.date > cache[pr.href])
                 const selfActivity = newActivities.findIndex(i => i.self)
@@ -38,11 +38,13 @@ module.exports = async timer => {
 
                 // +123   an.approver@whatever.com, someone.else@whatever.com
                 const reviewers = pr.reviewers.map(reviewer => {
-                    const color = {
-                        UNAPPROVED: chalk.yellow,
-                        APPROVED: chalk.green,
-                        NEEDS_WORK: chalk.red
-                    }[reviewer.status]
+                    const color = reviewer.self
+                        ? chalk.yellow
+                        : {
+                            UNAPPROVED: chalk.white,
+                            APPROVED: chalk.green,
+                            NEEDS_WORK: chalk.red
+                        }[reviewer.status]
                     return color(reviewer.name)
                 }).join(chalk.white(', ')) || chalk.white('No reviewers yet...')
 

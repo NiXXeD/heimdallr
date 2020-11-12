@@ -38,8 +38,9 @@ module.exports = async ({baseUrl, token, username, repositories}) => {
             reviewers = Object.values(pr.reviews
                 .reduce((acc, review) => {
                     const name = review.user.login
+                    const self = review.user.login === username
                     const status = review.state === 'CHANGES_REQUESTED' ? 'NEEDS_WORK' : review.state
-                    if (['APPROVED', 'UNAPPROVED', 'NEEDS_WORK'].includes(status)) acc[name] = {name, status}
+                    if (['APPROVED', 'UNAPPROVED', 'NEEDS_WORK'].includes(status)) acc[name] = {name, self, status}
                     return acc
                 }, reviewers)
             )
@@ -55,6 +56,7 @@ module.exports = async ({baseUrl, token, username, repositories}) => {
                 title: pr.title,
                 repoName: `${pr.owner}/${pr.repo}`,
                 author: pr.user.login,
+                authorSelf: pr.user.login === username,
                 updatedDate: pr.updated_at,
                 activities,
                 reviewers
