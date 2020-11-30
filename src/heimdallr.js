@@ -44,7 +44,7 @@ module.exports = async timer => {
 
                 // +123   an.approver@whatever.com, someone.else@whatever.com
                 const reviewers = pr.reviewers.map(reviewer => {
-                    const color = reviewer.self
+                    const color = reviewer.self && reviewer.status === 'UNAPPROVED'
                         ? chalk.yellow
                         : {
                             UNAPPROVED: chalk.white,
