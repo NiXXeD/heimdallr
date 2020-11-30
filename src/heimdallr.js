@@ -7,13 +7,19 @@ const config = require('./config')
 const adapters = require('./adapters')
 
 module.exports = async timer => {
-    // Fetch all data and restart timer
-    const dataRefreshedAtDate = moment()
-    const PRs = (await Promise.all(config.sources.map(source => adapters[source.type](source)))).flat()
-    timer.restart()
+    const refreshData = async () => {
+        // Fetch all data and restart timer
+        const PRs = (await Promise.all(config.sources.map(source => adapters[source.type](source)))).flat()
+        PRs.refreshDate = moment()
+        timer.restart()
+        return PRs
+    }
+    let PRs = await refreshData()
 
-    let choice
+    let choice = ''
     do {
+        if (choice === 'refresh') PRs = await refreshData()
+
         const openPrIds = []
         const choices = PRs
             .map(pr => {
@@ -69,7 +75,7 @@ module.exports = async timer => {
                     new inquirer.Separator(),
                     {
                         name: chalk.green('Refresh data ') +
-                            chalk.white(chalk.bold(`(last refreshed at ${dataRefreshedAtDate.format('h:mm:ss a')})`)),
+                            chalk.white(chalk.bold(`(last refreshed at ${PRs.refreshDate.format('h:mm:ss a')})`)),
                         value: 'refresh'
                     },
                     new inquirer.Separator(),
