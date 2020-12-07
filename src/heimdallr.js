@@ -25,8 +25,17 @@ module.exports = async timer => {
             .map(pr => {
                 openPrIds.push(pr.href)
                 let message = ''
+                const prStatus = pr.reviewers
+                    .map(review => review.status)
+                    .reduce((acc, val) => {
+                        if (acc === 'NEEDS_WORK') return acc
+                        else if (acc === 'APPROVED') return acc
+                        else return val
+                    }, 'UNAPPROVED')
+
                 // PR#123    feat(something): Should do a thing
-                const prNumber = chalk.gray(`PR#${`${pr.number}`.padEnd(5)}`)
+                const prNumberColor = statusColors[prStatus] || chalk.gray
+                const prNumber = prNumberColor(`PR#${`${pr.number}`.padEnd(5)}`)
                 const prTitle = chalk.white(pr.title)
                 message += `${prNumber} ${prTitle}\n`
 
@@ -46,11 +55,7 @@ module.exports = async timer => {
                 const reviewers = pr.reviewers.map(reviewer => {
                     const color = reviewer.self && reviewer.status === 'UNAPPROVED'
                         ? chalk.yellow
-                        : {
-                            UNAPPROVED: chalk.white,
-                            APPROVED: chalk.green,
-                            NEEDS_WORK: chalk.red
-                        }[reviewer.status]
+                        : statusColors[reviewer.status]
                     return color(reviewer.name)
                 }).join(chalk.white(', ')) || chalk.white('No reviewers yet...')
 
@@ -96,4 +101,10 @@ module.exports = async timer => {
             open(choice)
         }
     } while (choice)
+}
+
+const statusColors = {
+    UNAPPROVED: chalk.white,
+    APPROVED: chalk.green,
+    NEEDS_WORK: chalk.red
 }
