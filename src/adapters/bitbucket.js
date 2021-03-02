@@ -2,7 +2,7 @@ const chalk = require('chalk')
 const fetch = require('node-fetch')
 const {cache} = require('../cache')
 
-module.exports = async ({baseUrl, token, email, projects, repositories}) => {
+module.exports = async ({baseUrl, token, email, projects = [], repositories = []}) => {
     if (!baseUrl || !token) {
         console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the baseUrl and token variables in your bitbucket source.'))
         process.exit(-1)
