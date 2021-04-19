@@ -1,6 +1,5 @@
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const {cache} = require('../cache')
 
 module.exports = async ({baseUrl, token, email, projects = [], repositories = []}) => {
     if (!baseUrl || !token) {
@@ -15,7 +14,14 @@ module.exports = async ({baseUrl, token, email, projects = [], repositories = []
                     Authorization: `Bearer ${token}`
                 }
             })
-            return await result.json()
+            const json = await result.json()
+            if (json.errors) {
+                json.errors.map(({message}) => {
+                    console.log(chalk.red('ERROR!') + ' ' + chalk.yellow(message) + ' ' + chalk.yellow('Please check your config file.'))
+                })
+                process.exit(-1)
+            }
+            return json
         }
     }
 
