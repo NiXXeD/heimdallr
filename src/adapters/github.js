@@ -38,6 +38,7 @@ module.exports = async ({baseUrl, token, username, repositories = []}) => {
 
     return PRs
         .flat()
+        .filter(x => x)
         .map(pr => {
             const href = pr._links.html.href
             // Requested reviewers as not yet reviewed
