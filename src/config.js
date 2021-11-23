@@ -1,5 +1,7 @@
-const fs = require('fs')
-const filename = require('os').homedir() + '/.heimdallrconfig.json'
+import fs from 'fs'
+import os from 'os'
+
+const filename = os.homedir() + '/.heimdallrconfig.json'
 
 let config = {
     sources: [],
@@ -15,4 +17,4 @@ try {
     process.exit(-1)
 }
 
-module.exports = config
+export default config

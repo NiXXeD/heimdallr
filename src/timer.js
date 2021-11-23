@@ -1,7 +1,8 @@
-const config = require('./config')
+import config from './config.js'
+
 const refreshIntervalMS = (config.refreshIntervalMinutes || 15) * 60 * 1000
 
-module.exports = {
+export default {
     timerId: null,
     prompt: null,
     func: null,

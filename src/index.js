@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk')
-const heimdallr = require('./heimdallr')
-const timer = require('./timer')
+import chalk from 'chalk'
+import heimdallr from './heimdallr.js'
+import timer from './timer.js'
 
 const main = async () => {
     try {
@@ -15,4 +15,4 @@ const main = async () => {
     }
 }
 timer.setFunc(main)
-return main()
+main()

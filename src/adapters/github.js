@@ -1,8 +1,7 @@
-const chalk = require('chalk')
-const {cache} = require('../cache')
-const {Octokit} = require('@octokit/rest')
+import chalk from 'chalk'
+import {Octokit} from '@octokit/rest'
 
-module.exports = async ({baseUrl, token, username, repositories = []}) => {
+export default async ({baseUrl, token, username, repositories = []}) => {
     if (!token) {
         console.log(chalk.red('ERROR!') + ' ' + chalk.yellow('Set the token variable in your github source.'))
         process.exit(-1)

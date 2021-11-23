@@ -1,12 +1,12 @@
-const chalk = require('chalk')
-const moment = require('moment')
-const inquirer = require('inquirer')
-const open = require('open')
-const {cache, updateCache, cleanCache} = require('./cache')
-const config = require('./config')
-const adapters = require('./adapters')
+import adapters from './adapters/index.js'
+import {cache, cleanCache, updateCache} from './cache.js'
+import inquirer from 'inquirer'
+import moment from 'moment'
+import chalk from 'chalk'
+import open from 'open'
+import config from './config.js'
 
-module.exports = async timer => {
+export default async timer => {
     const refreshData = async () => {
         // Fetch all data and restart timer
         const PRs = (await Promise.all(config.sources.map(source => adapters[source.type](source)))).flat()

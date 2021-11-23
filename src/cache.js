@@ -1,25 +1,24 @@
-const fs = require('fs')
-const moment = require('moment')
+import fs from 'fs'
+import moment from 'moment'
 
-const filename = __dirname + '/../.heimdallrcache.json'
+const filename = new URL('../heimdallrcache.json', import.meta.url)
 
-let cache
+export const cache = {}
 try {
     if (fs.existsSync(filename)) {
-        cache = JSON.parse(fs.readFileSync(filename, 'utf8'))
-    } else {
-        cache = {}
+        const cacheData = JSON.parse(fs.readFileSync(filename, 'utf8'))
+        Object.keys(cacheData).forEach(key => cache[key] = cacheData[key])
     }
 } catch (ex) {
-    cache = {}
+    console.log('Error loading cache', ex)
 }
 
-const updateCache = key => {
+export const updateCache = key => {
     cache[key] = moment().valueOf()
     fs.writeFileSync(filename, JSON.stringify(cache, null, 2))
 }
 
-const cleanCache = validKeys => {
+export const cleanCache = validKeys => {
     const cacheKeys = Object.keys(cache)
     cacheKeys.forEach(key => {
         if (!validKeys.includes(key)) {
@@ -28,5 +27,3 @@ const cleanCache = validKeys => {
     })
     fs.writeFileSync(filename, JSON.stringify(cache, null, 2))
 }
-
-module.exports = {cache, updateCache, cleanCache}
