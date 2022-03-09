@@ -1,7 +1,7 @@
 import fs from 'fs'
 import moment from 'moment'
 
-const filename = new URL('../heimdallrcache.json', import.meta.url)
+const filename = new URL('../.heimdallrcache.json', import.meta.url)
 
 export const cache = {}
 try {

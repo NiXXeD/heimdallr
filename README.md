@@ -1,7 +1,7 @@
 Heimdallr
 ---
 
-Keep watch over all your project PRs.
+Keep watch over all your project(s) PRs.
 
 Features
 ---

@@ -1,5 +1,5 @@
 import chalk from 'chalk'
-import fetch from 'node-fetch'
+import axios from 'axios'
 
 export default async ({baseUrl, token, email, projects = [], repositories = []}) => {
     if (!baseUrl || !token) {
@@ -9,25 +9,21 @@ export default async ({baseUrl, token, email, projects = [], repositories = []})
 
     const bitbucket = {
         get: async url => {
-            const result = await fetch(`${baseUrl}/${url}`, {
+            const {data} = await axios.get(`${baseUrl}/${url}`, {
+                timeout: 30000,
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             })
-            const json = await result.json()
-            if (json.errors) {
-                json.errors.map(({message}) => {
-                    console.log(chalk.red('ERROR!') + ' ' + chalk.yellow(message) + ' ' + chalk.yellow('Please check your config file.'))
-                })
-                process.exit(-1)
-            }
-            return json
+            return data
         }
     }
 
+    let repoCache = null
     const projectPRs = projects
         .map(async project => {
-            const {values: repos} = await bitbucket.get(`projects/${project}/repos?limit=100`)
+            const {values: repos} = repoCache || await bitbucket.get(`projects/${project}/repos?limit=100`)
+            repoCache = {values: repos}
             return await Promise.all(repos.map(async repo => {
                 const {values: repoPRs} = await bitbucket.get(`projects/${project}/repos/${repo.slug}/pull-requests`)
                 return Promise.all(repoPRs.map(async pr => {

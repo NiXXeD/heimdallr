@@ -1,7 +1,7 @@
 {
     "name": "heimdallr",
     "version": "0.0.1",
-    "description": "Keep watch over PRs for your bitbucket projects.",
+    "description": "Keep watch over all your project(s) PRs.",
     "author": "Andy Christianson",
     "license": "MIT",
     "private": true,
@@ -16,10 +16,10 @@
     },
     "dependencies": {
         "@octokit/rest": "18.12.0",
-        "chalk": "4.1.2",
+        "axios": "0.26.0",
+        "chalk": "5.0.0",
         "inquirer": "8.2.0",
         "moment": "2.29.1",
-        "node-fetch": "3.1.0",
         "open": "8.4.0"
     }
 }
